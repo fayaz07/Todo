@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import me.fayaz07.todo.ui.Home
+import me.fayaz07.todo.ui.HomeActivity
 import me.fayaz07.todo.utils.AppConfig
 
 class SplashScreen : AppCompatActivity() {
@@ -27,6 +27,6 @@ class SplashScreen : AppCompatActivity() {
     }
 
     private fun afterSplash() {
-        startActivity(Intent(this, Home::class.java))
+        startActivity(Intent(this, HomeActivity::class.java))
     }
 }
