@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import me.fayaz07.todo.ui.HomeActivity
+import me.fayaz07.todo.ui.home.HomeActivity
 import me.fayaz07.todo.utils.AppConfig
 
 class SplashActivity : AppCompatActivity() {

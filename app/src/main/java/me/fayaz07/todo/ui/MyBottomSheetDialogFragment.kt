@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import me.fayaz07.todo.R
 import me.fayaz07.todo.databinding.NewTodoBottomSheetBinding
+import me.fayaz07.todo.ui.add_todo.AddTodoViewModel
 
 class MyBottomSheetDialogFragment(private val todoViewModel: AddTodoViewModel) :
         BottomSheetDialogFragment() {
