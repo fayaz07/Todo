@@ -8,4 +8,7 @@ import me.fayaz07.todo.repository.TodoRepository
 class HomeViewModel : ViewModel() {
 
     val todoListLiveData: LiveData<List<TodoTask>> get() = TodoRepository.todoListLiveData
+
+    val handleTodoTask: (TodoTask) -> Unit = { println(it.title) }
+
 }

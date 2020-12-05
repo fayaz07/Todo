@@ -3,6 +3,7 @@ package me.fayaz07.todo.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import me.fayaz07.todo.models.TodoTask
+import me.fayaz07.todo.models.TodoTaskStatus
 
 object TodoRepository {
 
@@ -13,6 +14,19 @@ object TodoRepository {
 
     fun addTodo(todo: TodoTask) {
         todoData.add(todo)
+        notifyChanges()
+    }
+
+    fun markItemAsDone(todo: TodoTask, checked: Boolean) {
+        val index: Int = todoData.indexOf(todo)
+        if (checked)
+            changeTodoTaskStatus(index, TodoTaskStatus.Completed)
+        else
+            changeTodoTaskStatus(index, TodoTaskStatus.Pending)
+    }
+
+    private fun changeTodoTaskStatus(index: Int, status: TodoTaskStatus) {
+        todoData[index].status = status
         notifyChanges()
     }
 

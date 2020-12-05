@@ -7,15 +7,14 @@ import java.util.*
  * title : String
  * description : String
  * due on : Date
- * priority : TodoTaskPriority
- *
+ * status: TodoTaskStatus
  */
 
 data class TodoTask(
     val title: String,
     val description: String,
     val dueOn: Date,
-    val priority: TodoTaskPriority = TodoTaskPriority.Low,
+    var status: TodoTaskStatus = TodoTaskStatus.Pending
 )
 
-enum class TodoTaskPriority { Low, Medium, High }
+enum class TodoTaskStatus { Pending, Completed }
