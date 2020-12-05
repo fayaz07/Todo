@@ -2,7 +2,6 @@ package me.fayaz07.todo.ui.add_todo
 
 import android.app.DatePickerDialog
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import me.fayaz07.todo.models.TodoTask
 import me.fayaz07.todo.repository.TodoRepository
@@ -85,7 +84,7 @@ class AddTodoViewModel : ViewModel() {
 
     private fun getDay(): String {
 
-        var endsWith: Int = 0
+        var endsWith = 0
 
         if (selectedDay >= 20) {
             endsWith = selectedDay - 20
