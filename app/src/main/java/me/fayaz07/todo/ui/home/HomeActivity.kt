@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import me.fayaz07.todo.R
 import me.fayaz07.todo.adapters.TodoItemAdapter
 import me.fayaz07.todo.databinding.ActivityHomeBinding
+import me.fayaz07.todo.models.TodoTask
 import me.fayaz07.todo.ui.add_todo.AddTodoActivity
+import me.fayaz07.todo.ui.todo_detailed.TodoDetailedActivity
 
 class HomeActivity : AppCompatActivity() {
 
@@ -29,6 +31,8 @@ class HomeActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
+        homeViewModel.setContext(this)
+
         binding.todoListRecyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayout.VERTICAL, false)
 
@@ -39,7 +43,7 @@ class HomeActivity : AppCompatActivity() {
 //                list
 //            )
 
-            val adapter: TodoItemAdapter = TodoItemAdapter(list, homeViewModel.handleTodoTask)
+            val adapter: TodoItemAdapter = TodoItemAdapter(list, showTodoDetailed)
             binding.todoListRecyclerView.adapter = adapter
             handleNoTasksView()
 
@@ -49,6 +53,12 @@ class HomeActivity : AppCompatActivity() {
 
         binding.fabAddTodoButton.setOnClickListener { addTodo() }
 
+    }
+
+    val showTodoDetailed: (TodoTask) -> Unit = {
+        var intent = Intent(this, TodoDetailedActivity::class.java)
+        intent.putExtra("todoId", it.id)
+        startActivity(intent)
     }
 
     private fun addTodo() {

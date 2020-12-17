@@ -3,7 +3,6 @@ package me.fayaz07.todo.ui.add_todo
 import android.app.DatePickerDialog
 import android.content.Context
 import androidx.lifecycle.ViewModel
-import me.fayaz07.todo.models.TodoTask
 import me.fayaz07.todo.repository.TodoRepository
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,7 +23,7 @@ class AddTodoViewModel : ViewModel() {
     fun addNewTodo(title: String, description: String) {
         val string = "$selectedDay-$selectedMonth-$selectedYear"
         val date: Date = SimpleDateFormat("dd-MM-yyyy").parse(string)
-        TodoRepository.addTodo(TodoTask(title = title, description = description, date))
+        TodoRepository.addTodo(title = title, description = description, dueOn = date)
     }
 
     fun showDatePicker(context: Context, listener: DatePickerDialog.OnDateSetListener) {

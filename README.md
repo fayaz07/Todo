@@ -16,6 +16,7 @@
 
 ### Contents
 
+- Data binding
 - RecyclerView
 - LiveData
 - MVVM
