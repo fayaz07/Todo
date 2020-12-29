@@ -88,7 +88,7 @@ class TodoItemAdapter(private var todoList: List<TodoTask>, val onClick: (todo: 
 
         holder.checkBox.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             if (isChecked) {
-                TodoRepository.markItemAsDone(todoTask)
+                TodoRepository.markTodoAsDone(todoTask)
             }
         }
 

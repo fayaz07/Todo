@@ -10,6 +10,7 @@ import me.fayaz07.todo.R
 import me.fayaz07.todo.databinding.ActivityTodoDetailedBinding
 import me.fayaz07.todo.models.TodoTask
 import me.fayaz07.todo.models.TodoTaskStatus
+import me.fayaz07.todo.models.getDueIn
 import me.fayaz07.todo.repository.TodoRepository
 
 class TodoDetailedActivity : AppCompatActivity() {
@@ -35,6 +36,9 @@ class TodoDetailedActivity : AppCompatActivity() {
         binding.todoTitle.text = todoTask.title
         binding.todoDescription.text = todoTask.description
         binding.todoStatus.text = todoTask.status.name
+        binding.todoScheduledOn.text = todoTask.dueOn.toString()
+
+        todoTask.getDueIn()
 
         when (todoTask.status) {
             TodoTaskStatus.Pending -> binding.todoStatus.setTextColor(

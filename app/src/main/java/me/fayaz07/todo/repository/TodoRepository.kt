@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import me.fayaz07.todo.models.TodoTask
 import me.fayaz07.todo.models.TodoTaskStatus
 import me.fayaz07.todo.models.calendar
+import me.fayaz07.todo.models.isLagging
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -16,8 +17,14 @@ object TodoRepository {
     val todoListLiveData: LiveData<List<TodoTask>> get() = mutableTodoList
 
     fun addTodo(title: String, description: String, dueOn: Date) {
-        var id = todoData.size
-        todoData.add(TodoTask(id = id, title = title, description = description, dueOn = dueOn))
+        val id = todoData.size
+        val newTask = TodoTask(id = id, title = title, description = description, dueOn = dueOn)
+        if(newTask.isLagging()){
+            newTask.status = TodoTaskStatus.Lagging
+        }else{
+            newTask.status = TodoTaskStatus.Pending
+        }
+        todoData.add(newTask)
         notifyChanges()
     }
 
@@ -25,12 +32,8 @@ object TodoRepository {
         return todoData[id]
     }
 
-    fun markItemAsDone(todo: TodoTask) {
-//        val index: Int = todoData.indexOf(todo)
-//        if (checked)
-//            changeTodoTaskStatus(index, TodoTaskStatus.Completed)
-//        else
-//            changeTodoTaskStatus(index, TodoTaskStatus.Pending)
+
+    fun markTodoAsDone(todo: TodoTask) {
         val updatedTodo = markAsCompleted(todo)
         todoData[todo.id] = updatedTodo
         notifyChanges()

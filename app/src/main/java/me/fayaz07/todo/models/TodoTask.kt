@@ -2,9 +2,14 @@ package me.fayaz07.todo.models
 
 import android.util.Log
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 val calendar: Calendar = Calendar.getInstance()
+val simpleDateFormat: SimpleDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
 
 data class TodoTask(
     val id: Int,
@@ -23,8 +28,8 @@ fun getTodayDateInstance(): Date {
     val currentMonth = calendar.get(Calendar.MONTH)
     val currentYear = calendar.get(Calendar.YEAR)
 
-    val string = "$currentDay-$currentMonth-$currentYear"
-    return SimpleDateFormat("dd-MM-yyyy").parse(string)
+    val string = "$currentDay-${currentMonth+1}-$currentYear"
+    return simpleDateFormat.parse(string)!!
 }
 
 fun TodoTask.isLagging(): Boolean {
@@ -44,13 +49,15 @@ fun TodoTask.isLagging(): Boolean {
 
 fun TodoTask.getDueIn(): String {
     val today = getTodayDateInstance()
-
+    Log.d("TODAY", today.toString())
+    Log.d("DUE DAY", this.dueOn.toString())
+    // TODO: check the code here
 //    val dueInLong: Long = this.dueOn.time - today.time
-    val dueInYears: Int = this.dueOn.year - today.year
+//    val dueInYears: Int = this.dueOn.year - today.year
+    val dueInYears: Int = calendar.get(Calendar.YEAR) - 1900
     val dueInMonths: Int = this.dueOn.month - today.month
     val dueInDays: Int = this.dueOn.day - today.day
     Log.d("DAY", "$dueInYears, $dueInMonths ,$dueInDays")
-    var dueInString = "";
+    val dueInString = "";
     return dueInString
-
 }
