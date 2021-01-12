@@ -12,7 +12,7 @@
         <activity android:name=".ui.todo_detailed.TodoDetailedActivity"></activity>
         <activity android:name=".ui.add_todo.AddTodoActivity" />
         <activity android:name=".ui.home.HomeActivity" />
-        <activity android:name=".SplashActivity">
+        <activity android:name=".ui.splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

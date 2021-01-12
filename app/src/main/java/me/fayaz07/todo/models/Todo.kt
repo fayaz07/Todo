@@ -1,31 +1,38 @@
 package me.fayaz07.todo.models
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.*
 
 val calendar: Calendar = Calendar.getInstance()
 
-data class TodoTask(
-    val id: Int,
+@Entity(tableName = "todo")
+data class Todo(
+    @PrimaryKey val id: Int,
     val title: String,
     val description: String,
     val dueOn: Long,
-    var status: TodoTaskStatus = TodoTaskStatus.Pending,
+    var status: TodoStatus = TodoStatus.Pending,
     var completedOn: Long = 0
 )
 
-enum class TodoTaskStatus { Pending, Completed, Lagging }
+enum class TodoStatus { Pending, Completed, Lagging }
 
 fun getTodayDateInstance(): TDate {
     return fromMillis(System.currentTimeMillis())
 }
 
-fun TodoTask.isLagging(): Boolean {
+fun Todo.isLagging(): Boolean {
 
-    if (this.status == TodoTaskStatus.Completed) {
+    if (this.status == TodoStatus.Completed) {
         return false
     }
 
     val today = getTodayDateInstance()
+
+    if (fromMillis(this.dueOn).isToday(today)){
+        return false
+    }
 
     // due time is greater than today's time
     if (this.dueOn < today.millis) {
@@ -35,7 +42,7 @@ fun TodoTask.isLagging(): Boolean {
     return false
 }
 
-fun TodoTask.getCompletionStatus(): String {
+fun Todo.getCompletionStatus(): String {
 
 
     val today = getTodayDateInstance()
@@ -43,7 +50,7 @@ fun TodoTask.getCompletionStatus(): String {
     val isScheduledOnToday = fromMillis(this.dueOn).isToday(today)
 
 
-    if (this.status == TodoTaskStatus.Completed) {
+    if (this.status == TodoStatus.Completed) {
 
         if (isScheduledOnToday)
             return "Completed Today"

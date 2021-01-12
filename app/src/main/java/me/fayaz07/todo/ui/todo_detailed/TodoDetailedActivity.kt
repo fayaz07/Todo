@@ -14,7 +14,7 @@ import me.fayaz07.todo.repository.TodoRepository
 
 class TodoDetailedActivity : AppCompatActivity() {
 
-    private lateinit var todoTask: TodoTask
+    private lateinit var todo: Todo
     private lateinit var binding: ActivityTodoDetailedBinding
     private lateinit var viewModel: TodoDetailedViewModel
 
@@ -30,8 +30,8 @@ class TodoDetailedActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(TodoDetailedViewModel::class.java)
 
         TodoRepository.todoListLiveData.observe(this, { list ->
-            todoTask = list[id]
-            Log.d("todo-task", todoTask.title)
+            todo = list[id]
+            Log.d("todo-task", todo.title)
 
             // set values
             updateUI()
@@ -39,40 +39,29 @@ class TodoDetailedActivity : AppCompatActivity() {
 
         // register listeners
         binding.completeTodo.setOnClickListener {
-            markItemAsCompleted()
+            viewModel.markToDoAsCompleted(todo)
         }
 
         binding.notifyTodo.setOnClickListener {
-            notifyMe()
+            viewModel.notify(todo)
         }
 
         binding.openTodo.setOnClickListener {
-            reOpen()
+            viewModel.reOpenTodo(todo)
         }
     }
 
-    private fun markItemAsCompleted() {
-        viewModel.markToDoAsCompleted(todoTask)
-    }
-
-    private fun notifyMe() {
-        viewModel.notify(todoTask)
-    }
-
-    private fun reOpen() {
-        viewModel.reOpenTodo(todoTask)
-    }
 
     private fun updateUI() {
-        binding.todoTitle.text = todoTask.title
-        binding.todoDescription.text = todoTask.description
-        binding.todoStatus.text = todoTask.status.name
-        binding.todoScheduledOn.text = fromMillis(todoTask.dueOn).whenItsCompleted()
+        binding.todoTitle.text = todo.title
+        binding.todoDescription.text = todo.description
+        binding.todoStatus.text = todo.status.name
+        binding.todoScheduledOn.text = fromMillis(todo.dueOn).whenItsCompleted()
 
-        todoTask.getCompletionStatus()
+        todo.getCompletionStatus()
 
-        when (todoTask.status) {
-            TodoTaskStatus.Pending -> {
+        when (todo.status) {
+            TodoStatus.Pending -> {
                 binding.todoStatus.setTextColor(
                     ContextCompat.getColor(this, R.color.todo_pending)
                 )
@@ -82,17 +71,17 @@ class TodoDetailedActivity : AppCompatActivity() {
                 binding.completeTodo.visibility = View.VISIBLE
                 binding.notifyTodo.visibility = View.VISIBLE
             }
-            TodoTaskStatus.Completed -> {
+            TodoStatus.Completed -> {
                 binding.todoStatus.setTextColor(
                     ContextCompat.getColor(this, R.color.todo_done)
                 )
-                binding.todoCompletedOn.text = fromMillis(todoTask.completedOn).whenItsCompleted()
+                binding.todoCompletedOn.text = fromMillis(todo.completedOn).whenItsCompleted()
 
                 binding.openTodo.visibility = View.VISIBLE
                 binding.completeTodo.visibility = View.GONE
                 binding.notifyTodo.visibility = View.GONE
             }
-            TodoTaskStatus.Lagging -> {
+            TodoStatus.Lagging -> {
                 binding.todoStatus.setTextColor(
                     ContextCompat.getColor(
                         this, R.color.todo_due
@@ -110,9 +99,5 @@ class TodoDetailedActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 }

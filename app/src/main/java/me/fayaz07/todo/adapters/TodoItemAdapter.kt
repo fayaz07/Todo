@@ -1,6 +1,5 @@
 package me.fayaz07.todo.adapters
 
-import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,7 @@ import me.fayaz07.todo.models.*
 import me.fayaz07.todo.repository.TodoRepository
 import kotlin.properties.Delegates
 
-class TodoItemAdapter(private var todoList: List<TodoTask>, val onClick: (todo: TodoTask) -> Unit) :
+class TodoItemAdapter(private var todoList: List<Todo>, val onClick: (todo: Todo) -> Unit) :
     RecyclerView.Adapter<TodoItemAdapter.TodoItemView>() {
 
     private var greenColor by Delegates.notNull<Int>()
@@ -24,7 +23,7 @@ class TodoItemAdapter(private var todoList: List<TodoTask>, val onClick: (todo: 
 
     init {
         todoList.sortedBy { i -> i.dueOn }
-        todoList.sortedBy { i -> i.status == TodoTaskStatus.Completed }
+        todoList.sortedBy { i -> i.status == TodoStatus.Completed }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoItemView {
@@ -45,7 +44,7 @@ class TodoItemAdapter(private var todoList: List<TodoTask>, val onClick: (todo: 
         holder.status.text = todoTask.getCompletionStatus()
 
         when (todoTask.status) {
-            TodoTaskStatus.Completed -> {
+            TodoStatus.Completed -> {
                 holder.parent.setCardBackgroundColor(greenColor)
 
                 holder.checkBox.isChecked = true
@@ -53,23 +52,23 @@ class TodoItemAdapter(private var todoList: List<TodoTask>, val onClick: (todo: 
 
 //                holder.title.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
             }
-            TodoTaskStatus.Pending -> {
+            TodoStatus.Pending -> {
                 holder.parent.setCardBackgroundColor(orangeColor)
 
                 holder.checkBox.isChecked = false
 
 //                holder.title.paintFlags = Paint.LINEAR_TEXT_FLAG
             }
-            TodoTaskStatus.Lagging -> {
+            TodoStatus.Lagging -> {
                 holder.parent.setCardBackgroundColor(redColor)
 
                 holder.checkBox.isChecked = false
-                
+
 //                holder.title.paintFlags = Paint.LINEAR_TEXT_FLAG
             }
         }
 
-        if (fromMillis(todoTask.dueOn).isToday(fromMillis(System.currentTimeMillis()))){
+        if (fromMillis(todoTask.dueOn).isToday(fromMillis(System.currentTimeMillis())) && todoTask.status != TodoStatus.Completed) {
             holder.parent.setCardBackgroundColor(orangeColor)
 
             holder.checkBox.isChecked = false

@@ -33,8 +33,8 @@ fun TDate.difference(other: TDate): TDate {
     )
 }
 
-fun TDate.isToday(other: TDate): Boolean {
-    if (this.year == other.year && this.month == other.month && this.day == other.day) return true
+fun TDate.isToday(today: TDate): Boolean {
+    if (this.year == today.year && this.month == today.month && this.day == today.day) return true
     return false
 }
 

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import me.fayaz07.todo.R
 import me.fayaz07.todo.adapters.TodoItemAdapter
 import me.fayaz07.todo.databinding.ActivityHomeBinding
-import me.fayaz07.todo.models.TodoTask
+import me.fayaz07.todo.models.Todo
 import me.fayaz07.todo.ui.add_todo.AddTodoActivity
 import me.fayaz07.todo.ui.todo_detailed.TodoDetailedActivity
 
@@ -44,7 +44,7 @@ class HomeActivity : AppCompatActivity() {
         binding.fabAddTodoButton.setOnClickListener { addTodo() }
     }
 
-    private val showTodoDetailed: (TodoTask) -> Unit = {
+    private val showTodoDetailed: (Todo) -> Unit = {
         val intent = Intent(this, TodoDetailedActivity::class.java)
         intent.putExtra("todoId", it.id)
         startActivity(intent)
