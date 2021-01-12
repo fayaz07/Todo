@@ -11,9 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import me.fayaz07.todo.R
-import me.fayaz07.todo.models.TodoTask
-import me.fayaz07.todo.models.TodoTaskStatus
-import me.fayaz07.todo.models.isLagging
+import me.fayaz07.todo.models.*
 import me.fayaz07.todo.repository.TodoRepository
 import kotlin.properties.Delegates
 
@@ -25,7 +23,7 @@ class TodoItemAdapter(private var todoList: List<TodoTask>, val onClick: (todo: 
     private var redColor by Delegates.notNull<Int>()
 
     init {
-        todoList.sortedBy { i -> i.dueOn.time }
+        todoList.sortedBy { i -> i.dueOn }
         todoList.sortedBy { i -> i.status == TodoTaskStatus.Completed }
     }
 
@@ -42,48 +40,39 @@ class TodoItemAdapter(private var todoList: List<TodoTask>, val onClick: (todo: 
     override fun onBindViewHolder(holder: TodoItemView, position: Int) {
         val todoTask = todoList[position]
 
-        holder.textView.text = todoTask.title
+        holder.title.text = todoTask.title
+
+        holder.status.text = todoTask.getCompletionStatus()
 
         when (todoTask.status) {
             TodoTaskStatus.Completed -> {
-
-                holder.parent.strokeColor = greenColor
+                holder.parent.setCardBackgroundColor(greenColor)
 
                 holder.checkBox.isChecked = true
                 holder.checkBox.isEnabled = false
 
-                holder.textView.setTextColor(greenColor)
-                holder.textView.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+//                holder.title.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
             }
             TodoTaskStatus.Pending -> {
-
-                holder.parent.strokeColor = orangeColor
+                holder.parent.setCardBackgroundColor(orangeColor)
 
                 holder.checkBox.isChecked = false
 
-                holder.textView.setTextColor(orangeColor)
-                holder.textView.paintFlags = Paint.LINEAR_TEXT_FLAG
+//                holder.title.paintFlags = Paint.LINEAR_TEXT_FLAG
             }
             TodoTaskStatus.Lagging -> {
-
-                holder.parent.strokeColor = redColor
+                holder.parent.setCardBackgroundColor(redColor)
 
                 holder.checkBox.isChecked = false
-
-                holder.textView.setTextColor(redColor)
-                holder.textView.paintFlags = Paint.LINEAR_TEXT_FLAG
+                
+//                holder.title.paintFlags = Paint.LINEAR_TEXT_FLAG
             }
         }
 
-//        todoTask.getDueIn()
-
-        if (todoTask.isLagging()){
-            holder.parent.strokeColor = redColor
+        if (fromMillis(todoTask.dueOn).isToday(fromMillis(System.currentTimeMillis()))){
+            holder.parent.setCardBackgroundColor(orangeColor)
 
             holder.checkBox.isChecked = false
-
-            holder.textView.setTextColor(redColor)
-            holder.textView.paintFlags = Paint.LINEAR_TEXT_FLAG
         }
 
         holder.checkBox.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
@@ -98,7 +87,6 @@ class TodoItemAdapter(private var todoList: List<TodoTask>, val onClick: (todo: 
     }
 
 
-
     override fun getItemCount(): Int {
         return todoList.size
     }
@@ -106,7 +94,9 @@ class TodoItemAdapter(private var todoList: List<TodoTask>, val onClick: (todo: 
     class TodoItemView(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var checkBox: CheckBox = itemView.findViewById(R.id.checkBoxTodoItem)
-        var textView: TextView = itemView.findViewById(R.id.titleViewTodoItem)
+        var title: TextView = itemView.findViewById(R.id.titleViewTodoItem)
+        var status: TextView = itemView.findViewById(R.id.statusTodoItem)
+
         var parent: MaterialCardView =
             itemView.findViewById(R.id.parentTodoItem)
 

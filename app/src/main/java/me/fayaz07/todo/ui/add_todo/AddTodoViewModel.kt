@@ -2,9 +2,11 @@ package me.fayaz07.todo.ui.add_todo
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import me.fayaz07.todo.repository.TodoRepository
-import java.text.SimpleDateFormat
+import me.fayaz07.todo.utils.Helpers.Companion.getDay
+import me.fayaz07.todo.utils.Helpers.Companion.getMonth
 import java.util.*
 
 class AddTodoViewModel : ViewModel() {
@@ -18,12 +20,18 @@ class AddTodoViewModel : ViewModel() {
 
     init {
         initCurrentDate()
+        initSelectedDate()
     }
 
+
     fun addNewTodo(title: String, description: String) {
-        val string = "$selectedDay-$selectedMonth-$selectedYear"
-        val date: Date = SimpleDateFormat("dd-MM-yyyy").parse(string)
-        TodoRepository.addTodo(title = title, description = description, dueOn = date)
+        val c = Calendar.getInstance()
+        c.set(selectedYear, selectedMonth, selectedDay)
+        TodoRepository.addTodo(
+            title = title,
+            description = description,
+            dueOn = c.timeInMillis
+        )
     }
 
     fun showDatePicker(context: Context, listener: DatePickerDialog.OnDateSetListener) {
@@ -35,9 +43,17 @@ class AddTodoViewModel : ViewModel() {
 
     private fun initCurrentDate() {
         val calendar: Calendar = Calendar.getInstance()
+        calendar.timeInMillis = System.currentTimeMillis()
+
         currentDay = calendar.get(Calendar.DAY_OF_MONTH)
         currentMonth = calendar.get(Calendar.MONTH)
         currentYear = calendar.get(Calendar.YEAR)
+    }
+
+    private fun initSelectedDate() {
+        selectedDay = currentDay
+        selectedMonth = currentMonth
+        selectedYear = currentYear
     }
 
     fun getWhenTodoIsScheduled(): String {
@@ -54,7 +70,7 @@ class AddTodoViewModel : ViewModel() {
                 return "Yesterday"
             }
         }
-        return "${getDay()} ${getMonth()}"
+        return "${getDay(selectedDay)} ${getMonth(selectedMonth)}"
     }
 
     fun onDateSet(year: Int, month: Int, dayOfMonth: Int) {
@@ -63,40 +79,4 @@ class AddTodoViewModel : ViewModel() {
         selectedMonth = month
     }
 
-    private fun getMonth(): String {
-        when (selectedMonth) {
-            0 -> return "January"
-            1 -> return "February"
-            2 -> return "March"
-            3 -> return "April"
-            4 -> return "May"
-            5 -> return "June"
-            6 -> return "July"
-            7 -> return "August"
-            8 -> return "September"
-            9 -> return "October"
-            10 -> return "November"
-            11 -> return "December"
-        }
-        return " "
-    }
-
-    private fun getDay(): String {
-
-        var endsWith = 0
-
-        if (selectedDay >= 20) {
-            endsWith = selectedDay - 20
-        }
-        if (selectedDay >= 30) {
-            endsWith = selectedDay - 30
-        }
-
-        when (endsWith) {
-            1 -> return "${selectedDay}st"
-            2 -> return "${selectedDay}nd"
-            3 -> return "${selectedDay}rd"
-        }
-        return "${selectedDay}th"
-    }
 }

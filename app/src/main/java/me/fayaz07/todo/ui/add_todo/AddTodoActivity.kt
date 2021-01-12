@@ -2,8 +2,6 @@ package me.fayaz07.todo.ui.add_todo
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
 import android.widget.DatePicker
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil

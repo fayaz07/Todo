@@ -11,7 +11,7 @@ import me.fayaz07.todo.ui.todo_detailed.TodoDetailedActivity
 
 class HomeViewModel : ViewModel() {
 
-    lateinit var ctx: Context
+    private lateinit var ctx: Context
 
     val todoListLiveData: LiveData<List<TodoTask>> get() = TodoRepository.todoListLiveData
 
@@ -19,10 +19,4 @@ class HomeViewModel : ViewModel() {
         ctx = context
     }
 
-    val handleTodoTask: (TodoTask) -> Unit = {
-        println(it.title)
-        var intent = Intent(ctx, TodoDetailedActivity::class.java)
-        intent.putExtra("todoId", it.id)
-        startActivity(ctx, intent, null)
-    }
 }

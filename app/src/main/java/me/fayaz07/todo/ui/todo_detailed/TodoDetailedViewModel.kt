@@ -7,7 +7,15 @@ import me.fayaz07.todo.repository.TodoRepository
 class TodoDetailedViewModel : ViewModel() {
 
     fun markToDoAsCompleted(todoTask: TodoTask) {
-//        TodoRepository.markItemAsDone(todoTask, true)
+        TodoRepository.markTodoAsDone(todoTask)
+    }
+
+    fun reOpenTodo(todoTask: TodoTask){
+        TodoRepository.reOpen(todoTask)
+    }
+
+    fun notify(todoTask: TodoTask){
+        // TODO: write code for notifying
     }
 
 }
