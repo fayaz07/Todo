@@ -1,19 +1,27 @@
 package me.fayaz07.todo.ui.home
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import me.fayaz07.todo.models.Todo
+import me.fayaz07.todo.models.TodoStatus
 import me.fayaz07.todo.repository.TodoRepository
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(private val todoRepository: TodoRepository) : ViewModel() {
 
-    private lateinit var ctx: Context
-
-    val todoListLiveData: LiveData<List<Todo>> get() = TodoRepository.todoListLiveData
-
-    fun setContext(context: Context) {
-        ctx = context
+    fun markTodoDone(todo: Todo) {
+        viewModelScope.launch {
+            val newTodo =
+                todo.copy(
+                    completedOn = System.currentTimeMillis(),
+                    status = TodoStatus.Completed
+                )
+            todoRepository.markTodoAsDone(newTodo)
+        }
     }
+
+    val todoListLiveData: LiveData<List<Todo>> = todoRepository.getList()
+
 
 }

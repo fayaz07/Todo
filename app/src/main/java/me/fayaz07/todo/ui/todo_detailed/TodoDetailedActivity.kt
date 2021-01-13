@@ -1,20 +1,20 @@
 package me.fayaz07.todo.ui.todo_detailed
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import me.fayaz07.todo.R
+import me.fayaz07.todo.ToDoApp
 import me.fayaz07.todo.databinding.ActivityTodoDetailedBinding
 import me.fayaz07.todo.models.*
-import me.fayaz07.todo.repository.TodoRepository
+import me.fayaz07.todo.ui.ViewModelFactory
+import me.fayaz07.todo.utils.Constants
 
 class TodoDetailedActivity : AppCompatActivity() {
 
-    private lateinit var todo: Todo
     private lateinit var binding: ActivityTodoDetailedBinding
     private lateinit var viewModel: TodoDetailedViewModel
 
@@ -25,34 +25,34 @@ class TodoDetailedActivity : AppCompatActivity() {
         supportActionBar?.title = "Todo detailed"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val id: Int = intent.getIntExtra("todoId", 0)
+        val id: String = intent.getStringExtra(Constants.INTENT_CONSTANT_TODO_ID) ?: ""
 
-        viewModel = ViewModelProvider(this).get(TodoDetailedViewModel::class.java)
+        viewModel = ViewModelProvider(this, ViewModelFactory(application as ToDoApp)).get(
+            TodoDetailedViewModel::class.java
+        )
 
-        TodoRepository.todoListLiveData.observe(this, { list ->
-            todo = list[id]
-            Log.d("todo-task", todo.title)
-
-            // set values
-            updateUI()
-        })
-
+        viewModel.getToDo(id).observe(this) {
+            it?.let { todo ->
+                updateUI(todo)
+                viewModel.todo = todo
+            }
+        }
         // register listeners
         binding.completeTodo.setOnClickListener {
-            viewModel.markToDoAsCompleted(todo)
+            viewModel.markToDoAsCompleted()
         }
 
         binding.notifyTodo.setOnClickListener {
-            viewModel.notify(todo)
+
         }
 
         binding.openTodo.setOnClickListener {
-            viewModel.reOpenTodo(todo)
+            viewModel.updateToDo()
         }
     }
 
 
-    private fun updateUI() {
+    private fun updateUI(todo: Todo) {
         binding.todoTitle.text = todo.title
         binding.todoDescription.text = todo.description
         binding.todoStatus.text = todo.status.name

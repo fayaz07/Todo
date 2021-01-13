@@ -20,8 +20,6 @@ class SplashActivity : AppCompatActivity() {
         // hiding appbar
         supportActionBar?.hide()
 
-        TodoRepository.initDatabase(this)
-
         // running post handler
         Handler(Looper.getMainLooper()).postDelayed(
             {

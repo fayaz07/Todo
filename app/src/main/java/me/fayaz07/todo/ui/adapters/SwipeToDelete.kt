@@ -1,4 +1,4 @@
-package me.fayaz07.todo.adapters
+package me.fayaz07.todo.ui.adapters
 
 import android.content.Context
 import android.graphics.*

@@ -1,32 +1,26 @@
 package me.fayaz07.todo.ui.home
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import me.fayaz07.todo.R
-import me.fayaz07.todo.adapters.SwipeToDeleteCallback
-import me.fayaz07.todo.adapters.TodoItemAdapter
+import me.fayaz07.todo.ToDoApp
 import me.fayaz07.todo.databinding.ActivityHomeBinding
 import me.fayaz07.todo.models.Todo
-import me.fayaz07.todo.repository.TodoRepository
+import me.fayaz07.todo.ui.ViewModelFactory
+import me.fayaz07.todo.ui.adapters.TodoItemAdapter
 import me.fayaz07.todo.ui.add_todo.AddTodoActivity
 import me.fayaz07.todo.ui.todo_detailed.TodoDetailedActivity
+import me.fayaz07.todo.utils.Constants
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var homeViewModel: HomeViewModel
-    private lateinit var adapter:TodoItemAdapter
-    private var oldList : List<Todo> = emptyList()
+    private lateinit var adapter: TodoItemAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,40 +29,44 @@ class HomeActivity : AppCompatActivity() {
         supportActionBar?.title = "Your Todo list"
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        homeViewModel = ViewModelProvider(
+            this,
+            ViewModelFactory(application as ToDoApp)
+        ).get(HomeViewModel::class.java)
 
-        homeViewModel.setContext(this)
-
-        binding.todoListRecyclerView.layoutManager =
-            LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-
-        adapter = TodoItemAdapter(showTodoDetailed)
-
-        homeViewModel.todoListLiveData.observe(this, { list ->
-            adapter.submitList(oldList, list)
-            oldList = ArrayList(list)
-            handleNoTasksView()
-//            Toast.makeText(this, "length changed: ${list.size}", Toast.LENGTH_LONG).show()
-        })
+        adapter = TodoItemAdapter(
+            onToDoClicked,
+            onToDoChecked
+        )
 
         binding.todoListRecyclerView.adapter = adapter
+
+        homeViewModel.todoListLiveData.observe(this, { list ->
+            adapter.submitList(list)
+            handleNoTasksView(list)
+        })
+
         binding.fabAddTodoButton.setOnClickListener { addTodo() }
 
-        enableSwipeToDeleteAndUndo()
+        // enableSwipeToDeleteAndUndo()
     }
 
-    private val showTodoDetailed: (Todo) -> Unit = {
+    private val onToDoClicked: (Todo) -> Unit = {
         val intent = Intent(this, TodoDetailedActivity::class.java)
-        intent.putExtra("todoId", it.id)
+        intent.putExtra(Constants.INTENT_CONSTANT_TODO_ID, it.id)
         startActivity(intent)
+    }
+
+    private val onToDoChecked: (Todo) -> Unit = {
+        homeViewModel.markTodoDone(it)
     }
 
     private fun addTodo() {
         startActivity(Intent(this, AddTodoActivity::class.java))
     }
 
-    private fun handleNoTasksView() {
-        if (homeViewModel.todoListLiveData.value?.size!! > 0) {
+    private fun handleNoTasksView(list: List<Todo>) {
+        if (list.isNotEmpty()) {
             // hide noTodoTasksHereView
             binding.noTodoTasksHereView.visibility = View.GONE
         } else {
@@ -77,32 +75,32 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun enableSwipeToDeleteAndUndo() {
-        val swipeToDeleteCallback: SwipeToDeleteCallback = object : SwipeToDeleteCallback(this) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, i: Int) {
-                val position = viewHolder.adapterPosition
-//                val item: String = adapter.getData().get(position)
-//                adapter.removeItem(position)
-
-                TodoRepository.removeAtPosition(position)
-
-                val snackbar = Snackbar
-                    .make(
-                        binding.coordinatorLayout,
-                        "Item was removed from the list.",
-                        Snackbar.LENGTH_LONG
-                    )
-                snackbar.setAction("UNDO") {
-//                    adapter.restoreItem(item, position)
-                    TodoRepository.restoreLastDeletedTodo()
-                    binding.todoListRecyclerView.scrollToPosition(position)
-                }
-                snackbar.setActionTextColor(Color.YELLOW)
-                snackbar.show()
-            }
-        }
-        val itemTouchhelper = ItemTouchHelper(swipeToDeleteCallback)
-        itemTouchhelper.attachToRecyclerView(binding.todoListRecyclerView)
-    }
+//    private fun enableSwipeToDeleteAndUndo() {
+//        val swipeToDeleteCallback: SwipeToDeleteCallback = object : SwipeToDeleteCallback(this) {
+//            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, i: Int) {
+//                val position = viewHolder.adapterPosition
+////                val item: String = adapter.getData().get(position)
+////                adapter.removeItem(position)
+//
+//                TodoRepository.removeToDo(position)
+//
+//                val snackbar = Snackbar
+//                    .make(
+//                        binding.coordinatorLayout,
+//                        "Item was removed from the list.",
+//                        Snackbar.LENGTH_LONG
+//                    )
+//                snackbar.setAction("UNDO") {
+////                    adapter.restoreItem(item, position)
+//                    TodoRepository.restoreLastDeletedTodo()
+//                    binding.todoListRecyclerView.scrollToPosition(position)
+//                }
+//                snackbar.setActionTextColor(Color.YELLOW)
+//                snackbar.show()
+//            }
+//        }
+//        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+//        itemTouchHelper.attachToRecyclerView(binding.todoListRecyclerView)
+//    }
 
 }

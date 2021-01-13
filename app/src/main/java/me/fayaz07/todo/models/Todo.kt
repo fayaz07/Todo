@@ -1,15 +1,15 @@
 package me.fayaz07.todo.models
 
-import android.util.Log
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.text.DateFormat
 import java.util.*
 
 val calendar: Calendar = Calendar.getInstance()
 
 @Entity(tableName = "todo")
 data class Todo(
-    @PrimaryKey val id: Int,
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
     val title: String,
     val description: String,
     val dueOn: Long,
@@ -17,43 +17,12 @@ data class Todo(
     var completedOn: Long = 0
 ) {
 
-    override fun equals(other: Any?): Boolean {
-        if (javaClass != other?.javaClass) {
-            return false
-        }
-
-        other as Todo
-
-//        Log.d("test", toString() + " " + other.toString() )
-
-        if (id != other.id) {
-            return false
-        }
-        if (title != other.title) {
-            return false
-        }
-        if (description != other.description) {
-            return false
-        }
-        if (dueOn != other.dueOn) {
-            return false
-        }
-        if (status != other.status) {
-            return false
-        }
-        if (completedOn != other.completedOn) {
-            return false
-        }
-        return true
-    }
-
-    override fun toString(): String {
-        return "Todo(id=$id, title='$title', description='$description', dueOn=$dueOn, status=$status, completedOn=$completedOn)"
-    }
-
 
 }
 
+/**
+ * TODO add in proguard before release if you are comparing with names
+ */
 enum class TodoStatus { Pending, Completed, Lagging }
 
 fun getTodayDateInstance(): TDate {

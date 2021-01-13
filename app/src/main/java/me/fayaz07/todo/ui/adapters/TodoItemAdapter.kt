@@ -1,6 +1,5 @@
-package me.fayaz07.todo.adapters
+package me.fayaz07.todo.ui.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,58 +8,27 @@ import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import me.fayaz07.todo.R
 import me.fayaz07.todo.models.*
-import me.fayaz07.todo.repository.TodoRepository
 import kotlin.properties.Delegates
 
-class TodoItemAdapter(val onClick: (todo: Todo) -> Unit) :
-    RecyclerView.Adapter<TodoItemAdapter.TodoItemView>() {
+class TodoItemAdapter(val onClick: (todo: Todo) -> Unit, val onToDoChecked: (Todo) -> Unit) :
+    ListAdapter<Todo, TodoItemAdapter.TodoItemView>(TodoDiffUtilCallBack()) {
 
-    private var todoList: List<Todo> = emptyList<Todo>()
     private var greenColor by Delegates.notNull<Int>()
     private var orangeColor by Delegates.notNull<Int>()
     private var redColor by Delegates.notNull<Int>()
 
-    init {
-        todoList.sortedBy { i -> i.dueOn }
-        todoList.sortedBy { i -> i.status == TodoStatus.Completed }
-    }
-
-    fun submitList(oldList: List<Todo>, newList: List<Todo>) {
-
-        print("Oldlist: ")
-        println(ArrayList(todoList))
-        print("Newlist: ")
-        println(ArrayList(newList))
-
-        val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(
-            TodoDiffUtilCallBack(
-                ArrayList(todoList), ArrayList(newList)
-            )
-        )
-        todoList = ArrayList(newList)
-        diffResult.dispatchUpdatesTo(this)
-    }
-
-    class TodoDiffUtilCallBack(var oldList: List<Todo>, var newList: List<Todo>) :
-        DiffUtil.Callback() {
-        override fun getOldListSize(): Int {
-            return oldList.size
+    class TodoDiffUtilCallBack : DiffUtil.ItemCallback<Todo>() {
+        override fun areItemsTheSame(oldItem: Todo, newItem: Todo): Boolean {
+            return oldItem.id == newItem.id
         }
 
-        override fun getNewListSize(): Int {
-            return newList.size
-        }
-
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].id == newList[newItemPosition].id
-        }
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldList[oldItemPosition].equals(newList[newItemPosition])
+        override fun areContentsTheSame(oldItem: Todo, newItem: Todo): Boolean {
+            return oldItem == newItem
         }
 
     }
@@ -76,7 +44,7 @@ class TodoItemAdapter(val onClick: (todo: Todo) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: TodoItemView, position: Int) {
-        val todoTask = todoList[position]
+        val todoTask = getItem(position)
 
         holder.title.text = todoTask.title
 
@@ -115,7 +83,7 @@ class TodoItemAdapter(val onClick: (todo: Todo) -> Unit) :
 
         holder.checkBox.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             if (isChecked) {
-                TodoRepository.markTodoAsDone(todoTask)
+                onToDoChecked(todoTask)
             }
         }
 
@@ -124,10 +92,6 @@ class TodoItemAdapter(val onClick: (todo: Todo) -> Unit) :
         }
     }
 
-
-    override fun getItemCount(): Int {
-        return todoList.size
-    }
 
     class TodoItemView(itemView: View) : RecyclerView.ViewHolder(itemView) {
 

@@ -3,7 +3,7 @@ package me.fayaz07.todo.db.dao
 import androidx.room.TypeConverter
 import me.fayaz07.todo.models.TodoStatus
 
-public class Converters {
+class Converters {
     @TypeConverter
     fun fromTodoStatus(value: TodoStatus): String {
         return value.name

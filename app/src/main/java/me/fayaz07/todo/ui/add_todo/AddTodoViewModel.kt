@@ -2,14 +2,16 @@ package me.fayaz07.todo.ui.add_todo
 
 import android.app.DatePickerDialog
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import me.fayaz07.todo.models.Todo
 import me.fayaz07.todo.repository.TodoRepository
 import me.fayaz07.todo.utils.Helpers.Companion.getDay
 import me.fayaz07.todo.utils.Helpers.Companion.getMonth
 import java.util.*
 
-class AddTodoViewModel : ViewModel() {
+class AddTodoViewModel(val todoRepository: TodoRepository) : ViewModel() {
 
     private var currentDay: Int = 0
     private var currentMonth: Int = 0
@@ -27,11 +29,16 @@ class AddTodoViewModel : ViewModel() {
     fun addNewTodo(title: String, description: String) {
         val c = Calendar.getInstance()
         c.set(selectedYear, selectedMonth, selectedDay)
-        TodoRepository.addTodo(
+        val todo = Todo(
             title = title,
             description = description,
             dueOn = c.timeInMillis
         )
+        viewModelScope.launch {
+            todoRepository.addTodo(
+                todo
+            )
+        }
     }
 
     fun showDatePicker(context: Context, listener: DatePickerDialog.OnDateSetListener) {

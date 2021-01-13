@@ -7,7 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import me.fayaz07.todo.R
+import me.fayaz07.todo.ToDoApp
 import me.fayaz07.todo.databinding.ActivityAddTodoBinding
+import me.fayaz07.todo.ui.ViewModelFactory
 
 
 class AddTodoActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
@@ -22,7 +24,7 @@ class AddTodoActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener 
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        addTodoViewModel = ViewModelProvider(this).get(
+        addTodoViewModel = ViewModelProvider(this, ViewModelFactory(application as ToDoApp)).get(
             AddTodoViewModel::class.java
         )
 
