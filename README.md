@@ -3,7 +3,7 @@
 ### Contents
 
 - Data binding
-- RecyclerView
+- RecyclerView with DiffUtil
 - LiveData
 - MVVM
 - Material UI

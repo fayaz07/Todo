@@ -34,13 +34,15 @@ class HomeActivity : AppCompatActivity() {
         binding.todoListRecyclerView.layoutManager =
             LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
-        homeViewModel.todoListLiveData.observe(this, { list ->
+        val adapter = TodoItemAdapter(showTodoDetailed)
 
-            val adapter = TodoItemAdapter(list, showTodoDetailed)
-            binding.todoListRecyclerView.adapter = adapter
+        homeViewModel.todoListLiveData.observe(this, { list ->
+            adapter.submitList(list)
             handleNoTasksView()
 //            Toast.makeText(this, "length changed: ${list.size}", Toast.LENGTH_LONG).show()
         })
+
+        binding.todoListRecyclerView.adapter = adapter
         binding.fabAddTodoButton.setOnClickListener { addTodo() }
     }
 

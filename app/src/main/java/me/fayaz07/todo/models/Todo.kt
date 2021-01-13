@@ -14,7 +14,35 @@ data class Todo(
     val dueOn: Long,
     var status: TodoStatus = TodoStatus.Pending,
     var completedOn: Long = 0
-)
+) {
+
+    override fun equals(other: Any?): Boolean {
+        if (javaClass != other?.javaClass) {
+            return false
+        }
+
+        other as Todo
+        if (id != other.id) {
+            return false
+        }
+        if (title != other.title) {
+            return false
+        }
+        if (description != other.description) {
+            return false
+        }
+        if (dueOn != other.dueOn) {
+            return false
+        }
+        if (status != other.status) {
+            return false
+        }
+        if (completedOn != other.completedOn) {
+            return false
+        }
+        return true
+    }
+}
 
 enum class TodoStatus { Pending, Completed, Lagging }
 
@@ -30,7 +58,7 @@ fun Todo.isLagging(): Boolean {
 
     val today = getTodayDateInstance()
 
-    if (fromMillis(this.dueOn).isToday(today)){
+    if (fromMillis(this.dueOn).isToday(today)) {
         return false
     }
 

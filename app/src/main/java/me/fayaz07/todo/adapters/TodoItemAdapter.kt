@@ -7,6 +7,7 @@ import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import me.fayaz07.todo.R
@@ -14,9 +15,10 @@ import me.fayaz07.todo.models.*
 import me.fayaz07.todo.repository.TodoRepository
 import kotlin.properties.Delegates
 
-class TodoItemAdapter(private var todoList: List<Todo>, val onClick: (todo: Todo) -> Unit) :
+class TodoItemAdapter(val onClick: (todo: Todo) -> Unit) :
     RecyclerView.Adapter<TodoItemAdapter.TodoItemView>() {
 
+    private var todoList: List<Todo> = emptyList<Todo>()
     private var greenColor by Delegates.notNull<Int>()
     private var orangeColor by Delegates.notNull<Int>()
     private var redColor by Delegates.notNull<Int>()
@@ -24,6 +26,37 @@ class TodoItemAdapter(private var todoList: List<Todo>, val onClick: (todo: Todo
     init {
         todoList.sortedBy { i -> i.dueOn }
         todoList.sortedBy { i -> i.status == TodoStatus.Completed }
+    }
+
+    fun submitList(newList: List<Todo>) {
+        val oldList = todoList
+        val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(
+            TodoDiffUtilCallBack(
+                oldList, newList
+            )
+        )
+        todoList = newList
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    class TodoDiffUtilCallBack(var oldList: List<Todo>, var newList: List<Todo>) :
+        DiffUtil.Callback() {
+        override fun getOldListSize(): Int {
+            return oldList.size
+        }
+
+        override fun getNewListSize(): Int {
+            return newList.size
+        }
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].id == newList[newItemPosition].id
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].equals(newList[newItemPosition])
+        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoItemView {
