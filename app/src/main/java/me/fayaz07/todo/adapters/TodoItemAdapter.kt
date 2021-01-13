@@ -1,5 +1,6 @@
 package me.fayaz07.todo.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,14 +29,19 @@ class TodoItemAdapter(val onClick: (todo: Todo) -> Unit) :
         todoList.sortedBy { i -> i.status == TodoStatus.Completed }
     }
 
-    fun submitList(newList: List<Todo>) {
-        val oldList = todoList
+    fun submitList(oldList: List<Todo>, newList: List<Todo>) {
+
+        print("Oldlist: ")
+        println(ArrayList(todoList))
+        print("Newlist: ")
+        println(ArrayList(newList))
+
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(
             TodoDiffUtilCallBack(
-                oldList, newList
+                ArrayList(todoList), ArrayList(newList)
             )
         )
-        todoList = newList
+        todoList = ArrayList(newList)
         diffResult.dispatchUpdatesTo(this)
     }
 

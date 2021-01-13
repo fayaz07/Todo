@@ -1,5 +1,6 @@
 package me.fayaz07.todo.models
 
+import android.util.Log
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.*
@@ -22,6 +23,9 @@ data class Todo(
         }
 
         other as Todo
+
+//        Log.d("test", toString() + " " + other.toString() )
+
         if (id != other.id) {
             return false
         }
@@ -42,6 +46,12 @@ data class Todo(
         }
         return true
     }
+
+    override fun toString(): String {
+        return "Todo(id=$id, title='$title', description='$description', dueOn=$dueOn, status=$status, completedOn=$completedOn)"
+    }
+
+
 }
 
 enum class TodoStatus { Pending, Completed, Lagging }

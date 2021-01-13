@@ -46,6 +46,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/androidx.lifecycle/lifecycle-viewmodel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
 
     def room_version = "2.2.6" // check latest version from docs
 

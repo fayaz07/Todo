@@ -3,16 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.home.HomeActivity">
 
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/todoListRecyclerView"
+        <RelativeLayout
+            android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/todoListRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabAddTodoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="16dp"
+                android:layout_alignParentEnd="true"
+                android:background="@color/white"
+                android:contentDescription="Add"
+                android:src="@drawable/ic_baseline_add_white_24" />
+
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/noTodoTasksHereView"
@@ -21,6 +39,8 @@
             android:foregroundGravity="center"
             android:gravity="center"
             android:orientation="vertical"
+            app:layout_anchor="@+id/relativeLayout"
+            app:layout_anchorGravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -39,17 +59,6 @@
                 android:textSize="24sp" />
         </LinearLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabAddTodoButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_margin="16dp"
-            android:background="@color/white"
-            android:contentDescription="Add"
-            android:src="@drawable/ic_baseline_add_white_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

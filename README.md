@@ -10,3 +10,5 @@
 - FloatingActionButton
 - Room persistence
 - Coroutines
+- Coordinator layout
+- Swipe to delete and undo

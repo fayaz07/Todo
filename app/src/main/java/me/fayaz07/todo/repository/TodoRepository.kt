@@ -22,6 +22,8 @@ object TodoRepository {
     private val mutableTodoList = MutableLiveData<List<Todo>>()
     val todoListLiveData: LiveData<List<Todo>> get() = mutableTodoList
 
+    private lateinit var lastDeletedTodo: Todo
+
     // database
     private lateinit var db: AppDatabase
     private lateinit var dao: TodoDao
@@ -43,7 +45,7 @@ object TodoRepository {
         // Caused by: java.lang.IllegalStateException: Cannot access database on the main
         //  thread since it may potentially lock the UI for a long period of time.
         CoroutineScope(IO).launch {
-            val list = dao.getAll()
+            val list = dao.getAll().sortedBy { e -> e.id }
             todoData.addAll(0, list)
         }
         notifyChanges()
@@ -95,17 +97,23 @@ object TodoRepository {
         return todo
     }
 
-    fun removeTodo(todo: Todo) {
-        todoData.remove(todo)
+    fun removeAtPosition(id: Int) {
+        lastDeletedTodo = todoData[id]
+        todoData.removeAt(id)
 
         // update in local database
         CoroutineScope(IO).launch {
-            dao.delete(todoData[todo.id])
+            dao.delete(todoData[lastDeletedTodo.id])
         }
         notifyChanges()
     }
 
-    fun clear() {
+    fun restoreLastDeletedTodo(){
+        todoData.add(lastDeletedTodo.id, lastDeletedTodo)
+        notifyChanges()
+    }
+
+    private fun clear() {
         todoData.clear()
 //        CoroutineScope(IO).launch {
 //
